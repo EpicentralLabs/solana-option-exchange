@@ -16,9 +16,9 @@ export const metadata = {
 
 const links = [
   { label: 'Trade', path: '/trade' },
-  { label: 'Portfolio', path: '/account' },
-  { label: 'Mint Option', path: '/mint-option' },
   { label: 'OMLP', path: '/omlp' },
+  { label: 'Option Lab', path: '/mint-option' },
+  { label: 'Portfolio', path: '/account' },
 ]
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
