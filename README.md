@@ -1,5 +1,3 @@
-# template-next-tailwind-basic
-
 ## Getting Started
 
 ### Prerequisites
