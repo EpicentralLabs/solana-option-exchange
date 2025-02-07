@@ -35,17 +35,13 @@ export function calculateOption(params: {
   volatility: number;
   riskFreeRate: number;
 }): OptionCalculation {
-  // Add placeholder price for testing
-  const PLACEHOLDER_PRICE = 42.0;
-  
   console.log('Input Parameters:', {
     type: params.isCall ? 'CALL' : 'PUT',
     strike: params.strikePrice.toFixed(2),
     spot: params.spotPrice.toFixed(2),
     timeToExpiryDays: (params.timeUntilExpirySeconds / (24 * 60 * 60)).toFixed(1),
     volatility: (params.volatility * 100).toFixed(1) + '%',
-    riskFreeRate: (params.riskFreeRate * 100).toFixed(1) + '%',
-    placeholderPrice: PLACEHOLDER_PRICE
+    riskFreeRate: (params.riskFreeRate * 100).toFixed(1) + '%'
   });
 
   // Convert time to years (same as Rust implementation)
@@ -108,17 +104,17 @@ export function calculateOption(params: {
   }
 
   const result = {
-    price: PLACEHOLDER_PRICE,
+    price: Math.max(0, price),
     greeks: {
-      delta: 0.5,  // placeholder greek values
-      gamma: 0.1,
-      theta: -0.1,
-      vega: 0.2,
-      rho: 0.05
+      delta,
+      gamma,
+      theta,
+      vega,
+      rho
     }
   };
 
-  console.log('Option Calculation Result (Placeholder):', {
+  console.log('Option Calculation Result:', {
     price: result.price.toFixed(4),
     greeks: {
       delta: result.greeks.delta.toFixed(4),
