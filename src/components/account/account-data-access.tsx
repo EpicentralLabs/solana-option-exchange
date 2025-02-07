@@ -21,6 +21,8 @@ export function useGetBalance({ address }: { address: PublicKey }) {
   return useQuery({
     queryKey: ['get-balance', { endpoint: connection.rpcEndpoint, address }],
     queryFn: () => connection.getBalance(address),
+    refetchInterval: 30000, // Refresh balance every 30 seconds
+    staleTime: 5000,
   })
 }
 
@@ -130,6 +132,50 @@ export function useRequestAirdrop({ address }: { address: PublicKey }) {
         }),
       ])
     },
+  })
+}
+
+export function useGetHistoricalBalances({ address }: { address: PublicKey }) {
+  const { connection } = useConnection()
+  
+  return useQuery({
+    queryKey: ['get-historical-balances', { endpoint: connection.rpcEndpoint, address }],
+    queryFn: async () => {
+      try {
+        // Get all signatures for the address
+        const signatures = await connection.getSignaturesForAddress(address, { limit: 1000 })
+        
+        // Get transaction data for each signature
+        const balanceHistory = await Promise.all(
+          signatures.map(async (sig) => {
+            const tx = await connection.getTransaction(sig.signature, {
+              maxSupportedTransactionVersion: 0
+            })
+            
+            if (!tx) return null
+            
+            return {
+              date: new Date(tx.blockTime! * 1000),
+              balance: tx.meta?.postBalances[0] || 0,
+              signature: sig.signature
+            }
+          })
+        )
+
+        // Filter out null values and sort by date
+        return balanceHistory
+          .filter((item): item is NonNullable<typeof item> => item !== null)
+          .sort((a, b) => a.date.getTime() - b.date.getTime())
+          .map(item => ({
+            date: item.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            sol: item.balance / LAMPORTS_PER_SOL
+          }))
+      } catch (error) {
+        console.error('Error fetching historical balances:', error)
+        throw error
+      }
+    },
+    refetchInterval: 30000, // Refresh every 30 seconds
   })
 }
 

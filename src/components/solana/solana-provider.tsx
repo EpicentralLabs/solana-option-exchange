@@ -16,6 +16,12 @@ import { useCluster } from '../cluster/cluster-data-access'
 
 require('@solana/wallet-adapter-react-ui/styles.css')
 
+const HELIUS_RPC_URL = process.env.NEXT_PUBLIC_HELIUS_RPC_URL as string
+
+if (!HELIUS_RPC_URL) {
+  throw new Error('NEXT_PUBLIC_HELIUS_RPC_URL is not defined in environment variables')
+}
+
 export const WalletButton = dynamic(
   async () => {
     const { WalletMultiButton } = await import('@solana/wallet-adapter-react-ui')
@@ -33,7 +39,11 @@ export const WalletButton = dynamic(
 
 export function SolanaProvider({ children }: { children: ReactNode }) {
   const { cluster } = useCluster()
-  const endpoint = useMemo(() => cluster.endpoint, [cluster])
+  const endpoint = useMemo(() => 
+    // Always use Helius RPC for mainnet, fallback to cluster endpoint for other networks
+    cluster.network === 'mainnet-beta' ? HELIUS_RPC_URL : cluster.endpoint
+  , [cluster])
+
   const onError = useCallback((error: WalletError) => {
     console.error(error)
   }, [])

@@ -14,26 +14,51 @@ import {
   useGetTokenAccounts,
   useRequestAirdrop,
   useTransferSol,
+  useGetBalanceUSD,
 } from './account-data-access'
 
 export function AccountBalance({ address }: { address: PublicKey }) {
   const query = useGetBalance({ address })
-  const percentageChange = 2.45 // This should match the last value from chart data
+  
+  if (query.isLoading) {
+    return (
+      <div className="flex flex-col items-center gap-1">
+        <span className="text-gray-500 text-lg">Portfolio Balance:</span>
+        <div className="flex items-center gap-3">
+          <h1 className="text-5xl font-bold">Loading...</h1>
+        </div>
+      </div>
+    )
+  }
+
+  if (query.isError) {
+    return (
+      <div className="flex flex-col items-center gap-1">
+        <span className="text-gray-500 text-lg">Portfolio Balance:</span>
+        <div className="flex items-center gap-3">
+          <h1 className="text-5xl font-bold text-red-500">Error loading balance</h1>
+        </div>
+      </div>
+    )
+  }
+
+  const solBalance = (query.data || 0) / LAMPORTS_PER_SOL
 
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className="text-gray-500 text-lg">Portfolio Value:</span>
+      <span className="text-gray-500 text-lg">Portfolio Balance:</span>
       <div className="flex items-center gap-3">
         <h1 className="text-5xl font-bold cursor-pointer" onClick={() => query.refetch()}>
-          ${(546.88).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          {solBalance.toLocaleString('en-US', { 
+            minimumFractionDigits: 4, 
+            maximumFractionDigits: 4 
+          })} SOL
         </h1>
-        <span className={`text-2xl ${percentageChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-          {percentageChange >= 0 ? '+' : ''}{percentageChange.toFixed(2)}%
-        </span>
       </div>
     </div>
   )
 }
+
 export function AccountChecker() {
   const { publicKey } = useWallet()
   if (!publicKey) {
@@ -41,6 +66,7 @@ export function AccountChecker() {
   }
   return <AccountBalanceCheck address={publicKey} />
 }
+
 export function AccountBalanceCheck({ address }: { address: PublicKey }) {
   const { cluster } = useCluster()
   const mutation = useRequestAirdrop({ address })
