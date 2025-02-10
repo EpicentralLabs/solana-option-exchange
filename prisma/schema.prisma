@@ -1,0 +1,80 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+  CONTRIBUTOR
+}
+
+model User {
+  id                   Int       @id @default(autoincrement())
+  username             String    @unique
+  email                String    @unique
+  password             String
+  firstName            String?
+  lastName             String?
+  profileImage         String?
+  bio                  String?
+  role                 Role      @default(USER)
+  isActive             Boolean   @default(true)
+  isVerified           Boolean   @default(false)
+  verificationToken    String?
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+  lastLogin            DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  tokens               Tokens[]  // Relationship to the Tokens model
+}
+
+model Tokens {
+  id        Int       @id @default(autoincrement())
+  token     String    @unique
+  userId    Int      
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+
+  @@unique([userId, token])
+}
+
+model Contributor {
+  id         Int    @id @default(autoincrement())
+  username   String @unique
+  totalScore Float  @default(0.0)
+
+  commits Commit[]
+  issues  Issue[]
+  payouts Payout[]
+}
+
+model Commit {
+  id            Int         @id @default(autoincrement())
+  contributor   Contributor @relation(fields: [contributorId], references: [id])
+  contributorId Int
+  commitMessage String
+  commitType    String?
+  filesTouched  Int
+}
+
+model Issue {
+  id             Int         @id @default(autoincrement())
+  contributor    Contributor @relation(fields: [contributorId], references: [id])
+  contributorId  Int
+  issuesResolved Int
+}
+
+model Payout {
+  id            Int         @id @default(autoincrement())
+  contributor   Contributor @relation(fields: [contributorId], references: [id])
+  contributorId Int
+  payoutAmount  Float
+}
