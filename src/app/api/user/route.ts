@@ -28,7 +28,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       include: { user: true },
     });
 
-    if (!dbToken || dbToken.expiresAt <= new Date()) {
+    if (!dbToken || !dbToken.expiresAt || dbToken.expiresAt <= new Date()) {
       return NextResponse.json({ error: "Unauthorized - Invalid or expired token" }, { status: 401 });
     }
 
@@ -77,7 +77,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     });
 
     // Revoke previous tokens
-    await prisma.token.deleteMany({ where: { userId: user.id } });
+    await prisma.tokens.deleteMany({ where: { userId: user.id } });
 
     // Generate a token for the new user
     const token = generateToken(user.id.toString(), user.role);
@@ -85,7 +85,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     expiresAt.setDate(expiresAt.getDate() + 1); // 1-day expiration
 
     // Store token in database
-    await prisma.token.create({
+    await prisma.tokens.create({
       data: {
         userId: user.id,
         token,
