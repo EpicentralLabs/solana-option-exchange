@@ -5,6 +5,7 @@ import {UiLayout} from '@/components/ui/ui-layout'
 import {ReactQueryProvider} from './react-query-provider'
 import {ThemeProvider} from '@/components/theme-provider'
 import type { Metadata } from 'next'
+import { cn } from '@/lib/utils'
 
 export const metadata = {
   title: 'Solana OPX | Epicentral Labs',
@@ -24,21 +25,8 @@ const links = [
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body style={{
-        backgroundImage: "url('/WebPageBackground.png')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed',
-        minHeight: '100vh',
-        margin: 0,
-      }}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <body className={cn("min-h-screen bg-gradient-to-b from-[#101010] to-[#000000]")}>
+        <ThemeProvider attribute="class" defaultTheme="dark">
           <ReactQueryProvider>
             <ClusterProvider>
               <SolanaProvider>

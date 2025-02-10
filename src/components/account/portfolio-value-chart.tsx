@@ -67,7 +67,7 @@ export function PortfolioValueChart() {
 
   if (historicalBalances.isLoading) {
     return (
-      <Card className="border border-gray-200 dark:border-0 dark:bg-gradient-to-b dark:from-[#101010] dark:to-[#000000] mb-8">
+      <Card className="border-0 mb-8">
         <CardContent className="flex items-center justify-center h-[300px]">
           <div className="text-muted-foreground">Loading balance history...</div>
         </CardContent>
@@ -77,7 +77,7 @@ export function PortfolioValueChart() {
 
   if (historicalBalances.isError) {
     return (
-      <Card className="border border-gray-200 dark:border-0 dark:bg-gradient-to-b dark:from-[#101010] dark:to-[#000000] mb-8">
+      <Card className="border-0 mb-8">
         <CardContent className="flex items-center justify-center h-[300px]">
           <div className="text-red-500">Error loading balance history</div>
         </CardContent>
@@ -86,7 +86,7 @@ export function PortfolioValueChart() {
   }
 
   return (
-    <Card className="border border-gray-200 dark:border-0 dark:bg-gradient-to-b dark:from-[#101010] dark:to-[#000000] mb-8">
+    <Card className="border-0 mb-8">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-xl font-semibold">Portfolio Balance History</CardTitle>
         <div className="flex gap-2">

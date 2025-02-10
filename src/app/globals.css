@@ -5,6 +5,7 @@
 
 /* Define base theme variables and styles */
 @layer base {
+  
   :root {
     /* Light theme color variables */
     --background: 0 0% 100%;
@@ -61,15 +62,15 @@
   /* Dark theme color overrides */
   .dark {
     /* Background and text colors */
-    --background: 0 0% 0%;
+    --background: 0 0% 0% 0; /* Transparent background */
     --foreground: 0 0% 98%;
  
     /* Card colors */
-    --card: 0 0% 3.9%;
+    --card: 0 0% 0% 0.2;    /* Slightly visible background for cards */
     --card-foreground: 0 0% 98%;
  
     /* Popover colors */
-    --popover: 0 0% 3.9%;
+    --popover: 0 0% 0% 0.8; /* More visible background for popovers */
     --popover-foreground: 0 0% 98%;
  
     /* Primary colors */
@@ -111,26 +112,27 @@
   * {
     @apply border-border;
   }
-  /* Set background and text colors for body */
+  
   body {
-    @apply bg-background text-foreground;
-    background-image: 
-      radial-gradient(circle at 30% 40%, rgba(74, 133, 255, 0.15) 0%, transparent 70%),
-      radial-gradient(circle at 70% 60%, rgba(74, 133, 255, 0.15) 0%, transparent 70%),
-      url('/WebPageBackground.png');
-    background-size: 100% 100%, 100% 100%, cover;
+    @apply bg-transparent text-foreground;
+    background-image: url('/WebPageBackground.png');
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     min-height: 100vh;
-    margin: 0;
   }
 }
 
 /* Dark theme body background override */
 .dark body {
-  background-color: rgba(0, 0, 0, 0.85);
-  background-blend-mode: multiply, multiply, multiply, multiply;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: multiply;
+  background-image: url('/WebPageBackground.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 /* Full height layout */
@@ -260,6 +262,12 @@ body {
   .scrollbar-hide-delay:not(:hover):not(:focus):not(:active) {
     scrollbar-width: none;
   }
+
+  .glass-effect {
+    backdrop-filter: blur(12px);
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 }
 
 /* Global scrollbar styling for Webkit browsers */
@@ -304,4 +312,11 @@ body {
 
 .price-flash-down {
   animation: priceFlashRed 0.3s ease-out forwards;
+}
+
+/* Add a glass effect for cards in dark mode */
+.dark .card {
+  backdrop-filter: blur(12px);
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
